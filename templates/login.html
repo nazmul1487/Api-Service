@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>demo login</title>
-</head>
-<body>
-    <h1>LogIn</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+    {% block title %}
+        <title>Register Page</title>
+    {% endblock %}
+
+{% block body %}
+
+    <div class="content-section">
+        <form method="POST">
+                {% csrf_token %}
+                <div class="control-group form-group">
+                    <div class="controls">
+                        <label>Email*</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+                <div class="control-group form-group">
+                    <div class="controls">
+                        <label>Password*</label>
+                        {{ form.password }}
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Login">
+            </form>
+    </div>
+
+{% endblock %}
