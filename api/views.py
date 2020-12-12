@@ -90,7 +90,11 @@ class DataInput(View):
                     'content-type': 'application/json',
                     'Authorization': 'Token ' + self.request.session['token'],
                 }
+                #Demo URL
                 url = 'https://recruitment.fisdev.com/api/v0/recruiting-entities/'
+
+                # Final Submission
+                # url = 'https://recruitment.fisdev.com/api/v1/recruiting-entities/'
                 r = requests.post(url, json=data, headers=headers)
                 data_json = r.json()
 
