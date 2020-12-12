@@ -7,8 +7,8 @@ class LoginForm(forms.Form):
 
 
 job_type =(
-    ("backend","Backend"),
-    ("mobile","Mobile"),
+    ("Backend","Backend"),
+    ("Mobile","Mobile"),
 )
 
 
@@ -20,21 +20,21 @@ class UserInfo(forms.Form):
     email = forms.CharField(max_length=256, widget=forms.EmailInput(attrs={
         'class': 'form-control'}), required=True)
 
-    phone = forms.CharField(max_length=256, widget=forms.TextInput(attrs={
+    phone = forms.CharField(max_length=14, widget=forms.TextInput(attrs={
         'class': 'form-control'}), required=True)
 
     full_address = forms.CharField(max_length=512, widget=forms.Textarea(attrs={
         'class': 'form-control'}), required=True)
 
-    name_of_university = forms.CharField(max_length=512, widget=forms.TextInput(attrs={
+    name_of_university = forms.CharField(max_length=256, widget=forms.TextInput(attrs={
         'class': 'form-control'}), required=True)
 
     graduation_year = forms.CharField(label='Graduation Year', widget=forms.TextInput(attrs={'min':'2015','max': '2020','type': 'number'}))
 
-    cgpa = forms.DecimalField(label='Cgpa', initial=2.0, max_value=4, min_value=2, decimal_places=2 )
+    cgpa = forms.DecimalField(label='Cgpa', max_value=4, min_value=2, decimal_places=2 )
 
     experience_in_months = forms.CharField( widget=forms.NumberInput(attrs={
-        'class': 'form-control'}), required=True)
+        'class': 'form-control', 'min':0 ,'max': 100,}), required=True)
 
     current_work_place_name = forms.CharField(max_length=256, widget=forms.TextInput(attrs={
         'class': 'form-control'}), required=True)
@@ -49,4 +49,4 @@ class UserInfo(forms.Form):
     github_project_url = forms.CharField(max_length=512, widget=forms.TextInput(attrs={
         'class': 'form-control'}), required=True)
 
-    file = forms.FileField(widget=forms.FileInput(attrs={'accept': 'application/pdf'}))
+    file = forms.FileField(widget=forms.FileInput(attrs={'accept': 'application/pdf', }))
