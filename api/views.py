@@ -11,16 +11,18 @@ class UserLoginView(View):
     template_name = 'login.html'
     form_class = LoginForm
     initial = {'key': 'value'}
-    def dispatch(self, request, *args, **kwargs):
-        if request.session.has_key('token'):
-            return redirect('data')
 
-
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.session.has_key('token'):
+    #         return redirect('data')
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
+        if request.session.has_key('token'):
+            return redirect('data')
+        else:
+            form = self.form_class(initial=self.initial)
 
-        return render(request, self.template_name, {'form': form})
+            return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -109,4 +111,4 @@ class DataInput(View):
             else:
                 return redirect('data')
         else:
-            return redirect('data')
+            return redirect('login')
