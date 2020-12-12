@@ -11,6 +11,11 @@ class UserLoginView(View):
     template_name = 'login.html'
     form_class = LoginForm
     initial = {'key': 'value'}
+    def dispatch(self, request, *args, **kwargs):
+        if request.session.has_key('token'):
+            return redirect('data')
+
+
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
@@ -87,23 +92,21 @@ class DataInput(View):
                 r = requests.post(url, json=data, headers=headers)
                 data_json = r.json()
 
-                if r.status_code == 200:
-                    # CV file uploading
-                    file_headers = {
-                        'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-                        'Authorization': 'Token ' + self.request.session['token'],
-                    }
-                    url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(data_json['cv_file']['id'])
-                    rr = requests.put(url, data={'file': request.FILES['file']}, headers=file_headers)
-                    cv_data_json = rr.json()
-                    # print(data_json)
-                    if rr.status_code == 200:
-                        messages.success(request, 'Data Submitted Successfully!!!')
-                        return redirect('data')
-                    else:
-                        messages.error(request, cv_data_json['message'])
+                # CV file uploading
+                file_headers = {
+                    'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+                    'Authorization': 'Token ' + self.request.session['token'],
+                }
+                url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(data_json['cv_file']['id'])
+                rr = requests.put(url, data={'file': self.request.FILES['file']}, headers=file_headers)
+                data_json = rr.json()
+                print(rr.json)
+                if rr.status_code == 200:
+                    messages.success(request, 'Data Submitted Successfully!!!')
+                    return redirect('data')
                 else:
                     messages.error(request, data_json['message'])
-            return redirect('data')
+            else:
+                return redirect('data')
         else:
-            return redirect('login')
+            return redirect('data')
