@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}
+    <title>Data Input</title>
+{% endblock %}
+
+{% block body %}
+
+    <div class="content-section">
+        <form enctype="multipart/form-data" method="POST" >
+            {% csrf_token %}
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Name*</label>
+                    {{ form.name }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Email*</label>
+                    {{ form.email }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Phone*</label>
+                    {{ form.phone }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Full Address*</label>
+                    {{ form.full_address }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Name Of University*</label>
+                    {{ form.name_of_university }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Graduation Year*</label>
+                    {{ form.graduation_year }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>cgpa*</label>
+                    {{ form.cgpa }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Experience In Months*</label>
+                    {{ form.experience_in_months }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Current Work Place Name*</label>
+                    {{ form.current_work_place_name }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Applying In*</label>
+                    {{ form.applying_in }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Expected Salary*</label>
+                    {{ form.expected_salary }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Field Buzz Reference*</label>
+                    {{ form.field_buzz_reference }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>Github Project Url*</label>
+                    {{ form.github_project_url }}
+                </div>
+            </div>
+            <div class="control-group form-group">
+                <div class="controls">
+                    <label>CV File*</label>
+                    {{ form.file }}
+                </div>
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Submit">
+        </form>
+    </div>
+
+{% endblock %}
