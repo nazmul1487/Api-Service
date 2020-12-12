@@ -1,8 +1,5 @@
-from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
-import requests
 from django.views import View
-from django.http import HttpResponse
 import requests, json, uuid
 from api.form import LoginForm, UserInfo
 
@@ -61,7 +58,6 @@ class DataInput(View):
                 data['tsync_id'] = str(uuid.uuid1())
                 data['cv_file'] = {'tsync_id': str(uuid.uuid1())}
                 data._mutable = immutable
-                # print(data)
 
                 # Data Uploading
                 headers = {
@@ -71,17 +67,16 @@ class DataInput(View):
                 url = 'https://recruitment.fisdev.com/api/v0/recruiting-entities/'
                 r = requests.post(url, json=data, headers=headers)
                 data_json = r.json()
-                # print(data_json)
-                #
-                #CV file uploading
+
+                # CV file uploading
                 file_headers ={
-                    'Content-type' : 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+                    'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
                     'Authorization': 'Token ' + self.request.session['token'],
                 }
                 url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(data_json['cv_file']['id'])
                 rr = requests.put(url, data={'file': request.FILES['file']}, headers=file_headers)
                 data_json = rr.json()
-                print(data_json)
+                # print(data_json)
             return redirect('data')
         else:
             return redirect('login')
