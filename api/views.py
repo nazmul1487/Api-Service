@@ -1,6 +1,9 @@
+import requests
+import uuid
 from django.shortcuts import render, redirect
 from django.views import View
-import requests, json, uuid
+from django.contrib import messages
+
 from api.form import LoginForm, UserInfo
 
 
@@ -11,6 +14,7 @@ class UserLoginView(View):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
+
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
@@ -19,21 +23,32 @@ class UserLoginView(View):
             data = form.data
             # print(data)
             payload = {
-                         "username": data.get('email'),
-                         "password": data.get('password')
-                     }
+                "username": data.get('email'),
+                "password": data.get('password')
+            }
             url = 'https://recruitment.fisdev.com/api/login/'
             r = requests.post(url, json=payload, )
             data_json = r.json()
-            token = data_json['token']
-            print(token)
+
             if r.status_code == 200:
-                self.request.session['token'] = token
+                request.session['token'] = data_json['token']
                 print(request.session['token'])
+                messages.success(request, 'Login Successfully!!')
                 return redirect('data')
                 # return redirect('login')
             else:
+                messages.error(request, data_json['message'])
                 return redirect('login')
+        else:
+            return redirect('login')
+
+
+class UserLogoutView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if request.session.has_key('token'):
+            del request.session['token']
+            messages.error(request, 'Logout Successfully!!')
+            return redirect('login')
         else:
             return redirect('login')
 
@@ -44,12 +59,16 @@ class DataInput(View):
     initial = {'key': 'value'}
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
+        if request.session.has_key('token'):
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form': form})
+        else:
+            messages.warning(request, 'You have to login for submit your data!!')
+            return redirect('login')
 
     def post(self, request, *args, **kwargs):
         print(self.request.session['token'])
-        if self.request.session.has_key('token'):
+        if request.session.has_key('token'):
             form = self.form_class(request.POST, request.FILES)
             if form.is_valid():
                 data = form.data
@@ -68,15 +87,23 @@ class DataInput(View):
                 r = requests.post(url, json=data, headers=headers)
                 data_json = r.json()
 
-                # CV file uploading
-                file_headers ={
-                    'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-                    'Authorization': 'Token ' + self.request.session['token'],
-                }
-                url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(data_json['cv_file']['id'])
-                rr = requests.put(url, data={'file': request.FILES['file']}, headers=file_headers)
-                data_json = rr.json()
-                # print(data_json)
+                if r.status_code == 200:
+                    # CV file uploading
+                    file_headers = {
+                        'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+                        'Authorization': 'Token ' + self.request.session['token'],
+                    }
+                    url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(data_json['cv_file']['id'])
+                    rr = requests.put(url, data={'file': request.FILES['file']}, headers=file_headers)
+                    cv_data_json = rr.json()
+                    # print(data_json)
+                    if rr.status_code == 200:
+                        messages.success(request, 'Data Submitted Successfully!!!')
+                        return redirect('data')
+                    else:
+                        messages.error(request, cv_data_json['message'])
+                else:
+                    messages.error(request, data_json['message'])
             return redirect('data')
         else:
             return redirect('login')
