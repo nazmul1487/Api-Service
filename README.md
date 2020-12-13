@@ -42,3 +42,7 @@ Data Form
   $ http://127.0.0.1:8000/
 ```
 
+## Work Flow
+For details please check the issues of the application.
+
+
