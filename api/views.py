@@ -3,18 +3,14 @@ import uuid
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
-
 from api.form import LoginForm, UserInfo
+from django.conf import settings
 
 
 class UserLoginView(View):
     template_name = 'login.html'
     form_class = LoginForm
     initial = {'key': 'value'}
-
-    # def dispatch(self, request, *args, **kwargs):
-    #     if request.session.has_key('token'):
-    #         return redirect('data')
 
     def get(self, request, *args, **kwargs):
         if request.session.has_key('token'):
@@ -42,7 +38,6 @@ class UserLoginView(View):
                 print(request.session['token'])
                 messages.success(request, 'Login Successfully!!')
                 return redirect('data')
-                # return redirect('login')
             else:
                 messages.error(request, data_json['message'])
                 return redirect('login')
@@ -90,23 +85,29 @@ class DataInput(View):
                     'content-type': 'application/json',
                     'Authorization': 'Token ' + self.request.session['token'],
                 }
-                #Demo URL
-                url = 'https://recruitment.fisdev.com/api/v0/recruiting-entities/'
+                # Test URL
+                submit_url = 'https://recruitment.fisdev.com/api/v0/recruiting-entities/'
 
-                # Final Submission
-                # url = 'https://recruitment.fisdev.com/api/v1/recruiting-entities/'
-                r = requests.post(url, json=data, headers=headers)
+                # Final Submission URL
+                # submit_url = 'https://recruitment.fisdev.com/api/v1/recruiting-entities/'
+                r = requests.post(submit_url, json=data, headers=headers)
                 data_json = r.json()
 
                 # CV file uploading
                 file_headers = {
-                    'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+                    # 'Content-type': 'multipart/form-data; boundary=----WebKitFormBoundaryFfN0gBBt1cBHK7aK',
                     'Authorization': 'Token ' + self.request.session['token'],
                 }
-                url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(data_json['cv_file']['id'])
-                rr = requests.put(url, data={'file': self.request.FILES['file']}, headers=file_headers)
-                data_json = rr.json()
-                print(rr.json)
+                file_upload_url = 'https://recruitment.fisdev.com/api/file-object/{}/'.format(
+                    data_json['cv_file']['id'])
+                file = request.FILES['file']
+                # file_name = str(file)
+                with open(f'{settings.MEDIA_ROOT}/file.pdf', 'wb+') as f:
+                    for chunk in file.chunks():
+                        f.write(chunk)
+                rr = requests.put(file_upload_url, files={'file': open(f'{settings.MEDIA_ROOT}/file.pdf', 'rb')}, headers=file_headers)
+                file_data_json = rr.json()
+                print(file_data_json)
                 if rr.status_code == 200:
                     messages.success(request, 'Data Submitted Successfully!!!')
                     return redirect('data')
@@ -116,3 +117,5 @@ class DataInput(View):
                 return redirect('data')
         else:
             return redirect('login')
+
+
