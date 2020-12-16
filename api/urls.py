@@ -6,4 +6,5 @@ urlpatterns = [
     path('login/', UserLoginView.as_view(), name="login"),
     path('logout/', UserLogoutView.as_view(), name="logout"),
     path('', DataInput.as_view(), name="data"),
+    # path('file/', FileUpload.as_view(), name='file')
 ]

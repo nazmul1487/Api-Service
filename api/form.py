@@ -49,4 +49,4 @@ class UserInfo(forms.Form):
     github_project_url = forms.CharField(max_length=512, widget=forms.TextInput(attrs={
         'class': 'form-control'}), required=True)
 
-    file = forms.FileField(widget=forms.FileInput(attrs={'accept': 'application/pdf', }))
+    file = forms.Form
